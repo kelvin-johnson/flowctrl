@@ -2,6 +2,7 @@ package com.d18sg.flowctrl.lib.api;
 
 import com.d18sg.flowctrl.lib.definition.FlowableDefinitions;
 import com.d18sg.flowctrl.lib.dto.ProcessDefinitionsDTO;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.service.annotation.DeleteExchange;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
@@ -17,35 +18,35 @@ public interface ProcessDefinitionClient {
     Mono<String> getProcessDefinitions();
 
     @GetExchange(FlowableDefinitions.PROCESS_DEFINITION)
-    Mono<String> getProcessDefinition(String processDefinitionId);
+    Mono<String> getProcessDefinition(@PathVariable String processDefinitionId);
 
     @PutExchange(FlowableDefinitions.PROCESS_DEFINITION)
-    Mono<String> updateProcessDefinitionCategory(String processDefinitionId, String category);
+    Mono<String> updateProcessDefinitionCategory(@PathVariable String processDefinitionId, String category);
 
     @GetExchange(FlowableDefinitions.PROCESS_DEFINITION_RESOURCES_DATA)
-    Mono<String> getProcessDefinitionResourceData(String processDefinitionId);
+    Mono<String> getProcessDefinitionResourceData(@PathVariable String processDefinitionId);
 
     @GetExchange(FlowableDefinitions.PROCESS_DEFINITION_MODEL)
-    Mono<String> getProcessDefinitionModel(String processDefinitionId);
+    Mono<String> getProcessDefinitionModel(@PathVariable String processDefinitionId);
 
     @PutExchange(FlowableDefinitions.PROCESS_DEFINITION)
-    Mono<String> suspendProcessDefinition(String processDefinitionId);
+    Mono<String> suspendProcessDefinition(@PathVariable String processDefinitionId);
 
     @PutExchange(FlowableDefinitions.PROCESS_DEFINITION)
-    Mono<String> activateProcessDefinition(String processDefinitionId);
+    Mono<String> activateProcessDefinition(@PathVariable String processDefinitionId);
 
     @GetExchange(FlowableDefinitions.PROCESS_DEFINITION_CANDIDATE_STARTERS)
-    Mono<String> getProcessDefinitionCandidateStarters(String processDefinitionId);
+    Mono<String> getProcessDefinitionCandidateStarters(@PathVariable String processDefinitionId);
 
     @PostExchange(FlowableDefinitions.PROCESS_DEFINITION)
-    Mono<String> addCandidateStarterUserToProcessDefinition(String processDefinitionId, String userId);
+    Mono<String> addCandidateStarterUserToProcessDefinition(@PathVariable String processDefinitionId, String userId);
 
     @PostExchange(FlowableDefinitions.PROCESS_DEFINITION)
-    Mono<String> addCandidateStarterGroupToProcessDefinition(String processDefinitionId, String groupId);
+    Mono<String> addCandidateStarterGroupToProcessDefinition(@PathVariable String processDefinitionId, String groupId);
 
     @DeleteExchange(FlowableDefinitions.PROCESS_DEFINITION_CANDIDATE_STARTER)
-    Mono<String> deleteCandidateStarterFromProcessDefinition(String processDefinitionId, String family, String identityId);
+    Mono<String> deleteCandidateStarterFromProcessDefinition(@PathVariable String processDefinitionId, @PathVariable String family, @PathVariable String identityId);
 
     @GetExchange(FlowableDefinitions.PROCESS_DEFINITION_CANDIDATE_STARTER)
-    Mono<String> getCandidateStarterFromProcessDefinition(String processDefinitionId, String family, String identityId);
+    Mono<String> getCandidateStarterFromProcessDefinition(@PathVariable String processDefinitionId, @PathVariable String family, @PathVariable String identityId);
 }

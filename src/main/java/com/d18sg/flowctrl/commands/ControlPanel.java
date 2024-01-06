@@ -2,11 +2,13 @@ package com.d18sg.flowctrl.commands;
 
 import com.d18sg.flowctrl.Credentials;
 import com.d18sg.flowctrl.Settings;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-@ShellComponent
+@Command(group = "control-panel")
 public class ControlPanel {
 
     private Settings settings;
@@ -17,20 +19,20 @@ public class ControlPanel {
         this.credentials = credentials;
     }
 
-    @ShellMethod(key = "set-base-url")
-    public String setBaseUrl(@ShellOption String baseUrl) {
+    @Command(command = "set-base-url")
+    public String setBaseUrl(@Option String baseUrl) {
         this.settings.setBaseUrl(baseUrl);
         return "BaseURL set to " + this.settings.getBaseUrl();
     }
 
-    @ShellMethod(key = "set-base-api-url")
-    public String setBaseApiUrl(@ShellOption String baseApiUrl) {
+    @Command(command = "set-base-api-url")
+    public String setBaseApiUrl(@Option String baseApiUrl) {
         this.settings.setBaseApiUrl(baseApiUrl);
         return "BaseAPIURL set to " + this.settings.getBaseApiUrl();
     }
 
-    @ShellMethod(key = "authenticate")
-    public String authenticate(@ShellOption String username, @ShellOption String password) {
+    @Command(command = "authenticate")
+    public String authenticate(@Option String username, @Option String password) {
         this.credentials.setUsername(username);
         this.credentials.setPassword(password);
 

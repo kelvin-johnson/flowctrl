@@ -29,7 +29,7 @@ public class Settings {
 
     public Settings() {
         this.baseUrl = FlowableDefinitions.DEFAULT_BASE_URL;
-        this.baseApiUrl = FlowableDefinitions.DEFAULT_BASE_API_URL;
+        this.baseApiUrl = FlowableDefinitions.DEFAULT_FLOWABLE_BASE_API_URL;
         this.support = new PropertyChangeSupport(this);
     }
 

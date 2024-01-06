@@ -7,13 +7,14 @@ import com.d18sg.flowctrl.lib.definition.FlowableDefinitions;
 import com.d18sg.flowctrl.lib.dto.ProcessDefinitionsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
 
-public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient, ModelClient, DatabaseTableClient {
+import java.util.Map;
+
+public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient, ModelClient {//, DatabaseTableClient {
 
     private WebClientWrapper webClientWrapper;
     private Settings settings;
@@ -62,9 +63,24 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
     }
 
     // Database Table
-    @Override
+    //@Override
     public Mono<String> getDatabaseTables() {
         return databaseTableClient.getDatabaseTables();
+    }
+
+    //@Override
+    public Mono<String> getDatabaseTable(String tableName) {
+        return databaseTableClient.getDatabaseTable(tableName);
+    }
+
+    //@Override
+    public Mono<String> getDatabaseTableColumns(String tableName) {
+        return databaseTableClient.getDatabaseTableColumns(tableName);
+    }
+
+    //@Override
+    public Mono<String> getDatabaseTableData(String tableName) {
+        return databaseTableClient.getDatabaseTableData(tableName);
     }
 
     // Process Definition
@@ -134,14 +150,18 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
 
     // Deployment
     @Override
-    public Mono<String> getDeployments() {
-        return deploymentClient.getDeployments();
+    public Mono<String> getDeployments(Map<String,String> requestParameters) {
+        return deploymentClient.getDeployments(requestParameters);
     }
 
     @Override
-    public Mono<String> createDeployment(String fileName, String tenantId) {
+    public Mono<String> createDeployment(FileSystemResource fileSystemResource, String tenantId) {
+        return deploymentClient.createDeployment(fileSystemResource, tenantId);
+    }
+
+/*    private Mono<String> createDeploymentLocal(FileSystemResource fileSystemResource, String tenantId) {
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        FileSystemResource fileSystemResource = new FileSystemResource(fileName);
+
         builder.part(fileSystemResource.getFilename(), fileSystemResource);
         if(!tenantId.isBlank() && !tenantId.isEmpty()) {
             builder.part("tenantId", tenantId);
@@ -152,38 +172,26 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
                 .contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA)
                 .body(BodyInserters.fromMultipartData(builder.build()))
                 .retrieve().bodyToMono(String.class);
-    }
+    }*/
 
     @Override
-    public Mono<String> createDeployment(String fileName) {
-        return deploymentClient.createDeployment(fileName);
-        //return createDeployment(fileName, "");
+    public Mono<String> createDeployment(FileSystemResource fileSystemResource) {
+        return deploymentClient.createDeployment(fileSystemResource);
     }
-
-
 
     @Override
     public Mono<String> deleteDeployment(String deploymentId) {
-        return this.webClientWrapper.getWebClient()
-                .delete()
-                .uri(FlowableDefinitions.DEPLOYMENT, deploymentId)
-                .retrieve().bodyToMono(String.class);
+        return deploymentClient.deleteDeployment(deploymentId);
     }
 
     @Override
     public Mono<String> getDeploymentResources(String deploymentId) {
-        return this.webClientWrapper.getWebClient()
-                .get()
-                .uri(FlowableDefinitions.DEPLOYMENT_RESOURCES, deploymentId)
-                .retrieve().bodyToMono(String.class);
+        return deploymentClient.getDeploymentResources(deploymentId);
     }
 
     @Override
     public Mono<String> getDeploymentResource(String deploymentId, String resourceId) {
-        return this.webClientWrapper.getWebClient()
-                .get()
-                .uri(FlowableDefinitions.DEPLOYMENT_RESOURCE, deploymentId, resourceId)
-                .retrieve().bodyToMono(String.class);
+        return deploymentClient.getDeploymentResource(deploymentId, resourceId);
     }
 
     @Override
@@ -200,24 +208,17 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
 
     @Override
     public Mono<String> getModels() {
-        return this.webClientWrapper.getWebClient()
-                .get()
-                .uri(FlowableDefinitions.MODELS)
-                .retrieve().bodyToMono(String.class);
+        return modelClient.getModels();
     }
-
 
     @Override
     public Mono<String> getModel(String modelId) {
-        return this.webClientWrapper.getWebClient()
-                .get()
-                .uri(FlowableDefinitions.MODEL, modelId)
-                .retrieve().bodyToMono(String.class);
+        return modelClient.getModel(modelId);
     }
 
     @Override
-    public Mono<String> createModel() {
-        return null;
+    public Mono<String> createModel(String name, Map<String,String> modelInfo) {
+        return modelClient.createModel(name, modelInfo);
     }
 
     @Override
@@ -227,12 +228,12 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
 
     @Override
     public Mono<String> deleteModel(String modelId) {
-        return null;
+        return modelClient.deleteModel(modelId);
     }
 
     @Override
     public Mono<String> getModelEditorSource(String modelId) {
-        return null;
+        return modelClient.getModelEditorSource(modelId);
     }
 
     @Override
@@ -250,8 +251,4 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
         return null;
     }
 
-    @Override
-    public Mono<String> getModelResourceData(String modelId, String resourceId) {
-        return null;
-    }
 }

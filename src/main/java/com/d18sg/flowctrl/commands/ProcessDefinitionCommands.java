@@ -5,11 +5,10 @@ import com.d18sg.flowctrl.utility.JsonFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
 
-@ShellComponent
+@Command(group = "Process Definition Commands")
 public class ProcessDefinitionCommands {
     Logger logger = LoggerFactory.getLogger(ProcessDefinitionCommands.class);
     private WorkflowClient workflowClient;
@@ -21,7 +20,7 @@ public class ProcessDefinitionCommands {
         this.jsonFormatter = jsonFormatter;
     }
 
-    @ShellMethod(key = "get-process-definitions")
+    @Command(command = "get-process-definitions")
     public String get(@Option(defaultValue = "PRETTY") String printOption) {
         String response = workflowClient.getProcessDefinitions().block().toString();
         return jsonFormatter.format(response, printOption);

@@ -4,10 +4,11 @@ import com.d18sg.flowctrl.lib.WorkflowClient;
 import com.d18sg.flowctrl.utility.JsonFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.standard.ShellComponent;
 
 
-@ShellComponent
+@Command(group = "Engine Commands")
 public class EngineCommands {
     Logger logger = LoggerFactory.getLogger(EngineCommands.class);
     private WorkflowClient workflowClient;

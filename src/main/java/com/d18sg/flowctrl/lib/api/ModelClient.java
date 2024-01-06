@@ -1,26 +1,38 @@
 package com.d18sg.flowctrl.lib.api;
 
+import com.d18sg.flowctrl.lib.definition.FlowableDefinitions;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.service.annotation.DeleteExchange;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PostExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 public interface ModelClient {
 
+    @GetExchange(FlowableDefinitions.MODELS)
     Mono<String> getModels();
 
-    Mono<String> getModel(String filter);
+    @GetExchange(FlowableDefinitions.MODEL)
+    Mono<String> getModel(@PathVariable String modelId);
 
-    Mono<String> createModel();
+    @PostExchange(FlowableDefinitions.MODELS)
+    Mono<String> createModel(@PathVariable String name, Map<String,String> modelInfo);
 
-    Mono<String> updateModel(String modelId);
+    Mono<String> updateModel(@PathVariable String modelId);
 
-    Mono<String> deleteModel(String modelId);
+    @DeleteExchange(FlowableDefinitions.MODEL)
+    Mono<String> deleteModel(@PathVariable String modelId);
 
-    Mono<String> getModelEditorSource(String modelId);
+    @GetExchange(FlowableDefinitions.MODEL_SOURCE)
+    Mono<String> getModelEditorSource(@PathVariable String modelId);
 
-    Mono<String> setModelEditorSource(String modelId, String modelEditorSource);
+    Mono<String> setModelEditorSource(@PathVariable String modelId, String modelEditorSource);
 
-    Mono<String> getModelEditorSourceExtra(String modelId, String resourceId);
+    @GetExchange(FlowableDefinitions.MODEL_SOURCE_EXTRA)
+    Mono<String> getModelEditorSourceExtra(@PathVariable String modelId, @PathVariable String resourceId);
 
-    Mono<String> setModelEditorSourceExtra(String modelId, String resourceId, String modelEditorSourceExtra);
+    Mono<String> setModelEditorSourceExtra(@PathVariable String modelId, @PathVariable String resourceId, String modelEditorSourceExtra);
 
-    Mono<String> getModelResourceData(String modelId, String resourceId);
 }

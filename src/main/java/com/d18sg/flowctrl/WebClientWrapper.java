@@ -31,7 +31,7 @@ public class WebClientWrapper implements PropertyChangeListener {
         this.settings = settings;
         this.webClient = webClient();
 
-exe    }
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -64,7 +64,7 @@ exe    }
     private WebClient webClient() {
         logger.info("private:webClient: " + credentials.toString() + " " + settings.toString());
         String baseUrl = settings.getBaseUrl().isBlank() ? FlowableDefinitions.DEFAULT_BASE_URL : settings.getBaseUrl();
-        String baseApiUrl = settings.getBaseApiUrl().isBlank() ? FlowableDefinitions.DEFAULT_BASE_API_URL : settings.getBaseApiUrl();
+        String baseApiUrl = settings.getBaseApiUrl().isBlank() ? FlowableDefinitions.DEFAULT_FLOWABLE_BASE_API_URL : settings.getBaseApiUrl();
 
         WebClient webClient = webClientBuilder
                 .baseUrl(baseUrl + baseApiUrl)
