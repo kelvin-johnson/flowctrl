@@ -40,34 +40,7 @@ public class DeploymentCommands {
             , @Option(description = "If true, only returns deployments without a tenantId set. If false, the withoutTenantId parameter is ignored") String withoutTenantId
             , @Option(description = "Property to sort on, to be used together with the 'order'. 'id' (default), 'name', 'deployTime' or 'tenantId'") String sort
     ) {
-        //Map<String, String> requestParameters = new HashMap<>();
-/*
-
-        if(name != null && !name.isBlank() && !name.isEmpty())
-            requestParameters.put("name", name);
-
-        if(nameLike != null && !nameLike.isBlank() && !nameLike.isEmpty())
-            requestParameters.put("nameLike", nameLike);
-
-        if(category != null && !category.isBlank() && !category.isEmpty())
-            requestParameters.put("category", category);
-
-        if(categoryNotEquals != null && !categoryNotEquals.isBlank() && !categoryNotEquals.isEmpty())
-            requestParameters.put("categoryNotEquals", categoryNotEquals);
-
-        if(tenantId != null && !!tenantId.isBlank() && !tenantId.isEmpty())
-            requestParameters.put("tenantId", tenantId);
-
-        if(tenantIdLike != null && !tenantIdLike.isBlank() && !tenantIdLike.isEmpty())
-            requestParameters.put("tenantIdLike", tenantIdLike);
-
-        if(withoutTenantId != null && !withoutTenantId.isBlank() && !withoutTenantId.isEmpty())
-            requestParameters.put("withoutTenantId", withoutTenantId);
-
-        if(sort != null && !sort.isBlank() && !sort.isEmpty())
-            requestParameters.put("sort", sort);
-*/
-
+ 
         Map<String, String> requestParameters = packageParameters(
                   new ImmutablePair<>("name", name)
                 , new ImmutablePair<>("nameLike", nameLike)
