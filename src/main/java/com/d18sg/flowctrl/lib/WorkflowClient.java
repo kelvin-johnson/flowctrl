@@ -1,3 +1,19 @@
+/*
+ *    Copyright 2023 Kelvin Johnson
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.d18sg.flowctrl.lib;
 
 import com.d18sg.flowctrl.Settings;
@@ -7,14 +23,16 @@ import com.d18sg.flowctrl.lib.definition.FlowableDefinitions;
 import com.d18sg.flowctrl.lib.dto.ProcessDefinitionsDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
-public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient, ModelClient {//, DatabaseTableClient {
+public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient, ModelClient, UserClient {//, DatabaseTableClient {
 
     private WebClientWrapper webClientWrapper;
     private Settings settings;
@@ -150,7 +168,7 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
 
     // Deployment
     @Override
-    public Mono<String> getDeployments(Map<String,String> requestParameters) {
+    public Mono<ResponseEntity<String>> getDeployments(Map<String,String> requestParameters) {
         return deploymentClient.getDeployments(requestParameters);
     }
 
@@ -158,21 +176,6 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
     public Mono<String> createDeployment(FileSystemResource fileSystemResource, String tenantId) {
         return deploymentClient.createDeployment(fileSystemResource, tenantId);
     }
-
-/*    private Mono<String> createDeploymentLocal(FileSystemResource fileSystemResource, String tenantId) {
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-
-        builder.part(fileSystemResource.getFilename(), fileSystemResource);
-        if(!tenantId.isBlank() && !tenantId.isEmpty()) {
-            builder.part("tenantId", tenantId);
-        }
-        return this.webClientWrapper.getWebClient()
-                .post()
-                .uri(FlowableDefinitions.DEPLOYMENTS)
-                .contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(builder.build()))
-                .retrieve().bodyToMono(String.class);
-    }*/
 
     @Override
     public Mono<String> createDeployment(FileSystemResource fileSystemResource) {
@@ -195,17 +198,11 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
     }
 
     @Override
-    public Mono<String> getDeploymentResourceData(String deploymentId, String resourceId) {
-        //This will return binary data. Need option to save to file or uuencode or something
-        return this.webClientWrapper.getWebClient()
-                .get()
-                .uri( FlowableDefinitions.DEPLOYMENT_RESOURCE_DATA, deploymentId, resourceId)
-                .retrieve().bodyToMono(String.class);
+    public Flux<DataBuffer> getDeploymentResourceData(String deploymentId, String resourceId) {
+        return deploymentClient.getDeploymentResourceData(deploymentId, resourceId);
     }
 
     //Model
-
-
     @Override
     public Mono<String> getModels() {
         return modelClient.getModels();
@@ -251,4 +248,71 @@ public class WorkflowClient implements ProcessDefinitionClient, DeploymentClient
         return null;
     }
 
+    //User
+    @Override
+    public Mono<ResponseEntity<String>> getUsers(Map<String,String> requestParameters) {
+        return userClient.getUsers(requestParameters);
+    }
+
+    @Override
+    public Mono<String> getUser(String userId) {
+        return userClient.getUser(userId);
+    }
+
+    @Override
+    public Mono<String> createUser(String userId, Map<String, String> requestParameters) {
+        return null;
+    }
+
+    @Override
+    public Mono<String> deleteUser(String userId) {
+        return null;
+    }
+
+    @Override
+    public Flux<DataBuffer> getUserPicture(String userId) {
+        return userClient.getUserPicture(userId);
+    }
+
+    @Override
+    public Mono<String> getUserInfoList(String userId) {
+        return null;
+    }
+
+    @Override
+    public Mono<String> getUserInfo(String userId, String key) {
+        return null;
+    }
+
+    @Override
+    public Mono<String> updateUserInfo(String userId, String key, Map<String, String> requestParameters) {
+        return null;
+    }
+
+    @Override
+    public Mono<String> createUserInfo(String userId, String key, Map<String, String> requestParameters) {
+        return null;
+    }
+
+    @Override
+    public Mono<String> deleteUserInfo(String userId, String key) {
+        return userClient.deleteUserInfo(userId, key);
+    }
+
+    @Override
+    public Flux<DataBuffer> getUserPictureData(String userId) {
+        return userClient.getUserPictureData(userId);
+    }
+
+    @Override
+    public Mono<ResponseEntity<String>> updateUserPicture(FileSystemResource fileSystemResource, String userId, String mimeType) {
+        return userClient.updateUserPicture(fileSystemResource, userId, mimeType);
+    }
+
+    @Override
+    public String willItWork() {
+        return "Wow! It works!";
+    }
 }
+
+//Mono<ResponseEntity<T>>

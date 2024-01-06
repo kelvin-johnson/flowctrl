@@ -14,7 +14,20 @@
  *    limitations under the License.
  */
 
-package com.d18sg.flowctrl.lib.api;
+package com.d18sg.flowctrl.lib;
 
-public interface ProcessInstanceClient {
+import org.apache.commons.lang3.tuple.Pair;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ParameterPackager {
+    public static Map<String, String> packageParameters(Pair<String, String>... parameters) {
+        Map<String, String> requestParameters = new HashMap<>();
+        Arrays.stream(parameters).toList().forEach(p -> {
+            if(p.getValue() != null && !p.getValue().isBlank() && !p.getValue().isEmpty())
+                requestParameters.put(p.getKey(), p.getValue());
+        });
+        return requestParameters;
+    }
 }

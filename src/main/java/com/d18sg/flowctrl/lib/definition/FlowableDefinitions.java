@@ -1,3 +1,19 @@
+/*
+ *    Copyright 2023 Kelvin Johnson
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.d18sg.flowctrl.lib.definition;
 
 public class FlowableDefinitions {
@@ -6,7 +22,6 @@ public class FlowableDefinitions {
     public static final String DEFAULT_FLOWABLE_BASE_API_URL    = "/flowable-rest";
     public static final String DEFAULT_ACTIVITI_BASE_API_URL    = "/activiti-rest";
     public static final String DEFAULT_CAMUNDA_BASE_API_URL     = "/";
-
 
 
     public static final String DEPLOYMENTS                = "/service/repository/deployments";
@@ -38,6 +53,20 @@ public class FlowableDefinitions {
 
     public static final String JOBS   = "/service/management/jobs";
     public static final String JOB    = "/service/management/jobs/{jobId}";
+
+
+    public static final String USERS            = "/service/identity/users";
+    public static final String USER             = "/service/identity/users/{userId}";
+    public static final String USER_PICTURE     = "/service/identity/users/{userId}/picture";
+    public static final String USER_INFO_LIST   = "/service/identity/users/{userId}/info";
+    public static final String USER_INFO        = "/service/identity/users/{userId}/info/{key}";
+
+
+
+    public static final String GROUPS               = "/service/identity/groups";
+    public static final String GROUP                = "/service/identity/groups/{groupId}";
+    public static final String GROUP_MEMBERS_ADD    = "/service/identity/groups/{groupId}/members";
+    public static final String GROUP_MEMBER_DELETE  = "/service/identity/groups/{groupId}/members/{userId}";
 
 
 
