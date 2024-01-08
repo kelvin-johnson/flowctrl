@@ -16,8 +16,9 @@
 
 package com.d18sg.flowctrl.commands;
 
-import com.d18sg.flowctrl.lib.ParameterPackager;
-import com.d18sg.flowctrl.lib.WorkflowClient;
+import com.codernaught.wafle.ParameterPackager;
+import com.codernaught.wafle.WorkflowClient;
+import com.codernaught.wafle.definition.FlowableDefinitions;
 import com.d18sg.flowctrl.utility.JsonFormatter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jline.terminal.Terminal;
@@ -30,10 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,16 +67,16 @@ public class UserCommands {
             , @Option(description = "Field to sort results on, should be one of id, firstName, lastname or email.") String sort
     ) {
         Map<String, String> requestParameters = ParameterPackager.packageParameters(
-                  new ImmutablePair<>("id", id)
-                , new ImmutablePair<>("firstName", firstName)
-                , new ImmutablePair<>("lastName", lastName)
-                , new ImmutablePair<>("email", email)
-                , new ImmutablePair<>("firstNameLike", firstNameLike)
-                , new ImmutablePair<>("lastNameLike", lastNameLike)
-                , new ImmutablePair<>("emailLike", emailLike)
-                , new ImmutablePair<>("memberOfGroup", memberOfGroup)
-                , new ImmutablePair<>("potentialStarter", potentialStarter)
-                , new ImmutablePair<>("sort", sort)
+                  new ImmutablePair<>(FlowableDefinitions.ID, id)
+                , new ImmutablePair<>(FlowableDefinitions.FIRST_NAME, firstName)
+                , new ImmutablePair<>(FlowableDefinitions.LAST_NAME, lastName)
+                , new ImmutablePair<>(FlowableDefinitions.EMAIL, email)
+                , new ImmutablePair<>(FlowableDefinitions.FIRST_NAME_LIKE, firstNameLike)
+                , new ImmutablePair<>(FlowableDefinitions.LAST_NAME_LIKE, lastNameLike)
+                , new ImmutablePair<>(FlowableDefinitions.EMAIL_LIKE, emailLike)
+                , new ImmutablePair<>(FlowableDefinitions.MEMBER_OF_GROUP, memberOfGroup)
+                , new ImmutablePair<>(FlowableDefinitions.POTENTIAL_STARTER, potentialStarter)
+                , new ImmutablePair<>(FlowableDefinitions.SORT, sort)
         );
 
         ResponseEntity<String> response = workflowClient.getUsers(requestParameters).block();

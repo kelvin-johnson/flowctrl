@@ -17,15 +17,12 @@
 package com.d18sg.flowctrl.commands;
 
 
-import com.d18sg.flowctrl.lib.WorkflowClient;
+import com.codernaught.wafle.WorkflowClient;
 import com.d18sg.flowctrl.utility.JsonFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.shell.command.CommandRegistration;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
 
 @Command(group = "Model Commands")
 public class ModelCommands {

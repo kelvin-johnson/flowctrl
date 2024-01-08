@@ -16,14 +16,21 @@
 
 package com.d18sg.flowctrl;
 
-import com.d18sg.flowctrl.lib.WorkflowClient;
+import com.codernaught.wafle.Credentials;
+import com.codernaught.wafle.Settings;
+import com.codernaught.wafle.WebClientWrapper;
+import com.codernaught.wafle.WorkflowClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.shell.command.CommandRegistration;
 import org.springframework.shell.command.annotation.CommandScan;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.WebClient;
 
-@SpringBootApplication
+import java.util.Arrays;
+
+
+@SpringBootApplication(scanBasePackages = {"com.codernaught.wafle", "com.d18sg.flowctrl"})
 @CommandScan
 public class FlowctrlApplication {
 
@@ -31,10 +38,24 @@ public class FlowctrlApplication {
 		SpringApplication.run(FlowctrlApplication.class, args);
 	}
 
+	//@Bean
+	public Credentials credentials() {
+		return new Credentials();
+	}
 
+	//@Bean
+	public Settings settings() {
+		return new Settings();
+	}
+
+	//@Bean
+	public WebClientWrapper webClientWrapper(WebClient.Builder webClientBuilder, Credentials credentials, Settings settings) {
+		return new WebClientWrapper(webClientBuilder, credentials, settings);
+	}
 	@Bean
 	public WorkflowClient flowableClient(WebClientWrapper webClientWrapper, Settings settings) {
 		return new WorkflowClient(webClientWrapper, settings);
 	}
+
 }
 

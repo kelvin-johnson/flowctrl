@@ -16,7 +16,7 @@
 
 package com.d18sg.flowctrl.commands;
 
-import com.d18sg.flowctrl.lib.WorkflowClient;
+import com.codernaught.wafle.WorkflowClient;
 import com.d18sg.flowctrl.utility.JsonFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

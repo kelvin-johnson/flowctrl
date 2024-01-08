@@ -16,13 +16,12 @@
 
 package com.d18sg.flowctrl.commands;
 
-import com.d18sg.flowctrl.Credentials;
-import com.d18sg.flowctrl.Settings;
+
+import com.codernaught.wafle.Credentials;
+import com.codernaught.wafle.Settings;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+
 
 @Command(group = "control-panel")
 public class ControlPanel {

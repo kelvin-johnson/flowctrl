@@ -16,8 +16,9 @@
 
 package com.d18sg.flowctrl.commands;
 
-import com.d18sg.flowctrl.lib.ParameterPackager;
-import com.d18sg.flowctrl.lib.WorkflowClient;
+import com.codernaught.wafle.ParameterPackager;
+import com.codernaught.wafle.WorkflowClient;
+import com.codernaught.wafle.definition.FlowableDefinitions;
 import com.d18sg.flowctrl.utility.JsonFormatter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jline.terminal.Terminal;
@@ -70,74 +71,91 @@ public class DeploymentCommands {
             , @Option(description = "Parameter to allow for paging of the result. Default: 0") String start
             , @Option(description = "Parameter to allow for paging of the result. Default: 10") String size
     ) {
-
         Map<String, String> requestParameters = ParameterPackager.packageParameters(
-                  new ImmutablePair<>("name", name)
-                , new ImmutablePair<>("nameLike", nameLike)
-                , new ImmutablePair<>("category", category)
-                , new ImmutablePair<>("categoryNotEquals", categoryNotEquals)
-                , new ImmutablePair<>("tenantId", tenantId)
-                , new ImmutablePair<>("tenantIdLike", tenantIdLike)
-                , new ImmutablePair<>("withoutTenantId", withoutTenantId)
-                , new ImmutablePair<>("sort", sort)
-                , new ImmutablePair<>("start", sort)
-                , new ImmutablePair<>("size", sort)
+                  new ImmutablePair<>(FlowableDefinitions.NAME, name)
+                , new ImmutablePair<>(FlowableDefinitions.NAME_LIKE, nameLike)
+                , new ImmutablePair<>(FlowableDefinitions.CATEGORY, category)
+                , new ImmutablePair<>(FlowableDefinitions.CATEGORY_NOT_EQUALS, categoryNotEquals)
+                , new ImmutablePair<>(FlowableDefinitions.TENANT_ID, tenantId)
+                , new ImmutablePair<>(FlowableDefinitions.TENANT_ID_LIKE, tenantIdLike)
+                , new ImmutablePair<>(FlowableDefinitions.WITHOUT_TENANT_ID, withoutTenantId)
+                , new ImmutablePair<>(FlowableDefinitions.SORT, sort)
+                , new ImmutablePair<>(FlowableDefinitions.START, start)
+                , new ImmutablePair<>(FlowableDefinitions.SIZE, size)
         );
 
         ResponseEntity<String> response = workflowClient.getDeployments(requestParameters).block();
         terminal.writer().print(jsonFormatter.format(response.getBody(), printOption));
         terminal.writer().println();
         terminal.writer().flush();
-        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 77 : response.getStatusCode().value());
+        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
     }
 
     @Command(command = "create-deployment")
-    public String create(String fileName, @Option String tenantId) {
+    public Integer create(@Option(description = "compact|raw|pretty", defaultValue = "pretty") String printOption
+            ,@Option String fileName
+            ,@Option String tenantId) {
         FileSystemResource fileSystemResource = new FileSystemResource(fileName);
-        String response = workflowClient.createDeployment(fileSystemResource, tenantId).block().toString();
-        return jsonFormatter.format(response, "pretty");
+        ResponseEntity<String> response = workflowClient.createDeployment(fileSystemResource, tenantId).block();
+        terminal.writer().print(jsonFormatter.format(response.getBody(), printOption));
+        terminal.writer().println();
+        terminal.writer().flush();
+        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
     }
 
     @Command(command = "delete-deployment")
-    public String delete(@Option String deploymentId) {
-        String response = workflowClient.deleteDeployment(deploymentId).block().toString();
-        return jsonFormatter.format(response, "pretty");
+    public Integer delete(@Option(description = "compact|raw|pretty", defaultValue = "pretty") String printOption, @Option String deploymentId) {
+        ResponseEntity<Void> response = workflowClient.deleteDeployment(deploymentId).block();
+        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
     }
 
     @Command(command = "get-deployment-resources")
-    public String getResources(@Option(defaultValue = "PRETTY") String printOption, @Option String deploymentId) {
-        String response = workflowClient.getDeploymentResources(deploymentId).block().toString();
-        return jsonFormatter.format(response, printOption);
+    public Integer getResources(@Option(defaultValue = "pretty") String printOption, @Option String deploymentId) {
+        ResponseEntity<String> response = workflowClient.getDeploymentResources(deploymentId).block();
+        terminal.writer().print(jsonFormatter.format(response.getBody(), printOption));
+        terminal.writer().println();
+        terminal.writer().flush();
+        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
     }
 
     @Command(command = "get-deployment-resource")
-    public String getResource(@Option(defaultValue = "PRETTY") String printOption, @Option String deploymentId, @Option String resourceId) {
-        String response = workflowClient.getDeploymentResource(deploymentId, resourceId).block().toString();
-        return jsonFormatter.format(response, printOption);
+    public Integer getResource(@Option(defaultValue = "PRETTY") String printOption, @Option String deploymentId, @Option String resourceId) {
+        ResponseEntity<String> response = workflowClient.getDeploymentResource(deploymentId, resourceId).block();
+        terminal.writer().print(jsonFormatter.format(response.getBody(), printOption));
+        terminal.writer().println();
+        terminal.writer().flush();
+        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
     }
 
     @Command(command = "get-deployment-resource-data")
-    public String getResourceData(@Option(defaultValue = "PRETTY") String printOption
+    public Integer getResourceData(@Option(defaultValue = "pretty") String printOption
             , @Option String deploymentId
             , @Option String resourceId
             , @Option String destinationFile
-    ) throws IOException {
+    )  {
 
-        Flux<DataBuffer> flux = workflowClient.getDeploymentResourceData(deploymentId, resourceId);
+        ResponseEntity<Flux<DataBuffer>> response = workflowClient.getDeploymentResourceData(deploymentId, resourceId).block();
+        HttpStatusCode statusCode = response.getStatusCode();
+        try {
+            terminal.writer().println("Downloading " + resourceId + " from " + deploymentId + " to " + destinationFile);
+            terminal.writer().flush();
 
-        Path path = Paths.get(destinationFile);
-        DataBufferUtils.write(flux, path).block();
-        return Files.size(path) + " bytes written to " + destinationFile;
+            if (statusCode == HttpStatusCode.valueOf(200)) {
+                Path path = Paths.get(destinationFile);
+                DataBufferUtils.write(response.getBody(), path).block();
+                terminal.writer().println(Files.size(path) + " bytes written to " + destinationFile);
+                terminal.writer().flush();
+
+            } else {
+                terminal.writer().println("Error downloading " + resourceId + " from " + deploymentId + " to " + destinationFile);
+                terminal.writer().flush();
+            }
+
+        } catch (IOException e) {
+            terminal.writer().println("Error downloading " + resourceId + " from " + deploymentId + " to " + destinationFile);
+        } finally {
+            terminal.writer().flush();
+            return (statusCode == HttpStatusCode.valueOf(200) ? 0 : statusCode.value());
+        }
     }
-
-/*
-    private Map<String, String> packageParameters(Pair<String, String>... parameters) {
-        Map<String, String> requestParameters = new HashMap<>();
-        Arrays.stream(parameters).toList().forEach(p -> {
-            if(p.getValue() != null && !p.getValue().isBlank() && !p.getValue().isEmpty())
-                requestParameters.put(p.getKey(), p.getValue());
-        });
-        return requestParameters;
-    }
-    */
 }
