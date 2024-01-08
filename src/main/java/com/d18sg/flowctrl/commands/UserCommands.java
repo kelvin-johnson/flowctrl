@@ -27,11 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 import reactor.core.publisher.Flux;
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,10 +112,14 @@ public class UserCommands {
             , @Option(description = "The id of the user to get the picture for") String userId
             , @Option(description = "The file name of the picture to use for the user", required = true) String destinationFile
     ) throws IOException {
-        Flux<DataBuffer> flux = workflowClient.getUserPicture(userId);
+        ResponseEntity<Flux<DataBuffer>> response = workflowClient.getUserPicture(userId).block();
 
+        if(response.getStatusCode() != HttpStatusCode.valueOf(200)) {
+            return "Error: " + response.getStatusCode().toString();
+        }
         Path path = Paths.get(destinationFile);
-        DataBufferUtils.write(flux, path).block();
+        DataBufferUtils.write(response.getBody(), path).block();
+
         return Files.size(path) + " bytes written to " + destinationFile;
     }
 

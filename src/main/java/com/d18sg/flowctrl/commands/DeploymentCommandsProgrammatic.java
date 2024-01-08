@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.shell.Command;
 import org.springframework.shell.command.CommandRegistration;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,67 +67,67 @@ public class DeploymentCommandsProgrammatic {
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("name")
+                    .longNames(FlowableDefinitions.NAME)
                     .description("Only return deployments with the given name")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("nameLike")
+                    .longNames(FlowableDefinitions.NAME_LIKE)
                     .description("Only return deployments with a name like the given name")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("category")
+                    .longNames(FlowableDefinitions.CATEGORY)
                     .description("Only return deployments with the given category")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("categoryNotEquals")
+                    .longNames(FlowableDefinitions.CATEGORY_NOT_EQUALS)
                     .description("Only return deployments which don’t have the given category")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("tenantId")
+                    .longNames(FlowableDefinitions.TENANT_ID)
                     .description("Only return deployments with the given tenantId")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("tenantIdLike")
+                    .longNames(FlowableDefinitions.TENANT_ID_LIKE)
                     .description("Only return deployments with a tenantId like the given value")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("withoutTenantId")
+                    .longNames(FlowableDefinitions.WITHOUT_TENANT_ID)
                     .description("Only return deployments without a tenantId")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("sort")
+                    .longNames(FlowableDefinitions.SORT)
                     .description("Property to sort results on, should be one of id, name, deployTime or tenantId")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("order")
+                    .longNames(FlowableDefinitions.ORDER)
                     .description("Sort order, to be used in conjunction with the 'sort' parameter. Values may be 'asc' or 'desc'")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("start")
+                    .longNames(FlowableDefinitions.START)
                     .description("Parameter to allow for paging of the result. Default: 0")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
                     .and()
                 .withOption()
-                    .longNames("size")
+                    .longNames(FlowableDefinitions.SIZE)
                     .description("Parameter to allow for paging of the result. Default: 10")
                     .type(String.class)
                     .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
@@ -142,16 +143,17 @@ public class DeploymentCommandsProgrammatic {
                         });
 
                         requestParameters = ParameterPackager.packageParameters(
-                                new ImmutablePair<>(FlowableDefinitions.NAME, ctx.getOptionValue("name"))
-                                , new ImmutablePair<>(FlowableDefinitions.NAME_LIKE, ctx.getOptionValue("nameLike"))
-                                , new ImmutablePair<>(FlowableDefinitions.CATEGORY, ctx.getOptionValue("category"))
-                                , new ImmutablePair<>(FlowableDefinitions.CATEGORY_NOT_EQUALS, ctx.getOptionValue("categoryNotEquals"))
-                                , new ImmutablePair<>(FlowableDefinitions.TENANT_ID, ctx.getOptionValue("tenantId"))
-                                , new ImmutablePair<>(FlowableDefinitions.TENANT_ID_LIKE, ctx.getOptionValue("tenantIdLike"))
-                                , new ImmutablePair<>(FlowableDefinitions.WITHOUT_TENANT_ID, ctx.getOptionValue("withoutTenantId"))
-                                , new ImmutablePair<>(FlowableDefinitions.SORT, ctx.getOptionValue("sort"))
-                                , new ImmutablePair<>(FlowableDefinitions.START, ctx.getOptionValue("start"))
-                                , new ImmutablePair<>(FlowableDefinitions.SIZE, ctx.getOptionValue("size"))
+                                new ImmutablePair<>(FlowableDefinitions.NAME, ctx.getOptionValue(FlowableDefinitions.NAME))
+                                , new ImmutablePair<>(FlowableDefinitions.NAME_LIKE, ctx.getOptionValue(FlowableDefinitions.NAME_LIKE))
+                                , new ImmutablePair<>(FlowableDefinitions.CATEGORY, ctx.getOptionValue(FlowableDefinitions.CATEGORY))
+                                , new ImmutablePair<>(FlowableDefinitions.CATEGORY_NOT_EQUALS, ctx.getOptionValue(FlowableDefinitions.CATEGORY_NOT_EQUALS))
+                                , new ImmutablePair<>(FlowableDefinitions.TENANT_ID, ctx.getOptionValue(FlowableDefinitions.TENANT_ID))
+                                , new ImmutablePair<>(FlowableDefinitions.TENANT_ID_LIKE, ctx.getOptionValue(FlowableDefinitions.TENANT_ID_LIKE))
+                                , new ImmutablePair<>(FlowableDefinitions.WITHOUT_TENANT_ID, ctx.getOptionValue(FlowableDefinitions.WITHOUT_TENANT_ID))
+                                , new ImmutablePair<>(FlowableDefinitions.ORDER, ctx.getOptionValue(FlowableDefinitions.ORDER))
+                                , new ImmutablePair<>(FlowableDefinitions.SORT, ctx.getOptionValue(FlowableDefinitions.SORT))
+                                , new ImmutablePair<>(FlowableDefinitions.START, ctx.getOptionValue(FlowableDefinitions.START))
+                                , new ImmutablePair<>(FlowableDefinitions.SIZE, ctx.getOptionValue(FlowableDefinitions.SIZE))
                         );
 
                         ResponseEntity<String> response = workflowClient.getDeployments(requestParameters).block();
@@ -214,5 +216,41 @@ public class DeploymentCommandsProgrammatic {
                 .build();
     }
 
+    @Bean
+    CommandRegistration getDeployment() {
+        return CommandRegistration.builder()
+                .command("get-deployment")
+                .withHelpOptions()
+                    .enabled(true)
+                    .longNames("help")
+                    .shortNames('h')
+                    .command("help")
+                    .and()
+                .withOption()
+                    .longNames("printOption")
+                    .description("compact|raw|pretty")
+                    .defaultValue("pretty")
+                    .type(String.class)
+                    .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
+                    .and()
+                .withOption()
+                    .longNames("deploymentId")
+                    .description("The id of the deployment to get")
+                    .type(String.class)
+                    .arity(CommandRegistration.OptionArity.EXACTLY_ONE)
+                    .position(0)
+                    .required()
+                    .and()
+                .withTarget()
+                    .function(ctx -> {
+                        ResponseEntity<String> response = workflowClient.getDeployment(ctx.getOptionValue("deploymentId")).block();
+                        terminal.writer().print(jsonFormatter.format(response.getBody(), ctx.getOptionValue("printOption")));
+                        terminal.writer().println();
+                        terminal.writer().flush();
+                        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
+                })
+                .and()
+                .build();
+    }
 
 }
