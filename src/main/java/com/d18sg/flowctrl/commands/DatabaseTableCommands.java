@@ -26,10 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.shell.command.CommandRegistration;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
 
-//@Command(group = "Database Table Commands")
 @Configuration
 public class DatabaseTableCommands {
     Logger logger = LoggerFactory.getLogger(DatabaseTableCommands.class);
@@ -45,18 +42,13 @@ public class DatabaseTableCommands {
         this.terminal = terminal;
     }
 
-    //@Command(command = "get-database-tables", description = "Get list of database tables")
-    private String getDatabaseTables(String printOption) {
-        ResponseEntity<String> response = workflowClient.getDatabaseTables().block();
-        return jsonFormatter.format(response.getBody(), printOption);
-    }
-
     @Bean
     CommandRegistration getDatabaseTablesCommand() {
         return CommandRegistration
                 .builder()
                 .command("get-database-tables")
                 .description("Get list of database tables")
+                .group("Database Table Commands")
                 .withOption()
                     .longNames("printOption")
                     .description("compact|raw|pretty")
@@ -78,10 +70,6 @@ public class DatabaseTableCommands {
                 .build();
     }
 
-
-
-    //@Command(command = "get-database-table", description = "Get database table")
-    //private String getDatabaseTable(@Option(defaultValue = "PRETTY") String printOption, @Option String tableName) {
     private Integer getDatabaseTable(String printOption, String tableName) {
         ResponseEntity<String> response = workflowClient.getDatabaseTable(tableName).block();
 
@@ -97,6 +85,7 @@ public class DatabaseTableCommands {
                 .builder()
                 .command("get-database-table")
                 .description("Get database table")
+                .group("Database Table Commands")
                 .withOption()
                     .longNames("printOption")
                     .description("compact|raw|pretty")
@@ -118,17 +107,74 @@ public class DatabaseTableCommands {
                 .build();
     }
 
+    @Bean
+    CommandRegistration getDatabaseTableColumnsCommand() {
+        return CommandRegistration
+                .builder()
+                .command("get-database-columns")
+                .description("Get database table columns")
+                .group("Database Table Commands")
+                .withOption()
+                    .longNames("printOption")
+                    .description("compact|raw|pretty")
+                    .defaultValue("pretty")
+                    .type(String.class)
+                    .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
+                    .and()
+                .withOption()
+                    .longNames("tableName")
+                    .description("Name of table")
+                    .type(String.class)
+                    .arity(CommandRegistration.OptionArity.EXACTLY_ONE)
+                    .position(0)
+                    .and()
+                .withTarget()
+                    .function(ctx -> {
+                        String printOption = ctx.getOptionValue("printOption");
+                        ResponseEntity<String> response = workflowClient.getDatabaseTableColumns(ctx.getOptionValue("tableName")).block();
 
-    @Command(command = "get-database-columns", description = "Get database table columns")
-    public String getDatabaseTableColumns(@Option(defaultValue = "PRETTY") String printOption, @Option(required = true) String tableName) {
-        String response = workflowClient.getDatabaseTableColumns(tableName).block().toString();
-        return jsonFormatter.format(response, printOption);
+                        terminal.writer().print(jsonFormatter.format(response.getBody(), printOption));
+                        terminal.writer().println();
+                        terminal.writer().flush();
+                        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
+                    })
+                .and()
+                .build();
     }
 
-    @Command(command = "get-database-data", description = "Get database table data")
-    public String getDatabaseTableData(@Option(defaultValue = "PRETTY") String printOption, @Option String tableName) {
-        String response = workflowClient.getDatabaseTableData(tableName).block().toString();
-        return jsonFormatter.format(response, printOption);
+    @Bean
+    CommandRegistration getDatabaseTableDataCommand() {
+        return CommandRegistration
+                .builder()
+                .command("get-database-data")
+                .description("Get database table data")
+                .group("Database Table Commands")
+                .withOption()
+                    .longNames("printOption")
+                    .description("compact|raw|pretty")
+                    .defaultValue("pretty")
+                    .type(String.class)
+                    .arity(CommandRegistration.OptionArity.ZERO_OR_ONE)
+                    .and()
+                .withOption()
+                    .longNames("tableName")
+                    .description("Name of table")
+                    .type(String.class)
+                    .arity(CommandRegistration.OptionArity.EXACTLY_ONE)
+                    .position(0)
+                    .and()
+                .withTarget()
+                    .function(ctx -> {
+                        String printOption = ctx.getOptionValue("printOption");
+                        ResponseEntity<String> response = workflowClient.getDatabaseTableData(ctx.getOptionValue("tableName")).block();
+
+                        terminal.writer().print(jsonFormatter.format(response.getBody(), printOption));
+                        terminal.writer().println();
+                        terminal.writer().flush();
+                        return (response.getStatusCode() == HttpStatusCode.valueOf(200) ? 0 : response.getStatusCode().value());
+                    })
+                .and()
+                .build();
     }
 
 }

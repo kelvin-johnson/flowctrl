@@ -33,7 +33,6 @@ import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 import reactor.core.publisher.Flux;
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
